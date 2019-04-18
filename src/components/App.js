@@ -1,107 +1,83 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React, { Component } from 'react';
+import { Provider } from './Context';
+import Header from './Header';
+import PlayerList from './PlayerList';
+import AddPlayerForm from './AddPlayerForm';
 
-import Header from "./Header.js";
-import Player from "./Player.js";
-import AddPlayerForm from "./AddPlayerForm.js";
-
-import Footer from "./Footer.js";
-
-class App extends React.Component {
+class App extends Component {
   state = {
     players: [
       {
-        name: "mina",
-        score: 1,
+        name: "Guil",
+        score: 0,
         id: 1
       },
       {
-        name: "mary",
+        name: "Treasure",
         score: 0,
         id: 2
       },
       {
-        name: "sophia",
+        name: "Ashley",
         score: 0,
         id: 3
       },
       {
-        name: "tina",
+        name: "James",
         score: 0,
         id: 4
       }
     ]
   };
 
-  // player  id counter
-  prevPlayerID = 4;
-  getHighScore = () => {
-    const scores = this.state.players.map(p => p.score);
-    const highScore = Math.max(...scores);
-    if (highScore) {
-      return highScore;
-    }
-    return null;
-  };
-  //Arrayindex
-  handelScoreChange = (index, delta) => {
-    console.log(index, delta);
-    this.setState(prevState => {
+  // player id counter
+  prevPlayerId = 4;
+
+  handleScoreChange = (index, delta) => {
+    this.setState( prevState => ({
+      score: prevState.players[index].score += delta
+    }));
+  }
+
+  handleAddPlayer = (name) => {
+    this.setState( prevState => {
       return {
-        score: (prevState.players[index].score += delta)
+        players: [
+          ...prevState.players,
+          {
+            name,
+            score: 0,
+            id: this.prevPlayerId += 1
+          }
+        ]
       };
     });
-  };
+  }
 
-  removePlayer = id => {
-    this.setState(prevState => {
-      //filtering array
-      //using prev state value
-      // removing row from array
+  handleRemovePlayer = (id) => {
+    this.setState( prevState => {
       return {
         players: prevState.players.filter(p => p.id !== id)
       };
     });
-  };
-  handleAddPlayer = name => {
-    this.setState({
-      players: [
-        //Destructuring Props
-        ...this.state.players,
-        {
-          name, // name:name ES2015
-          score: 0,
-          id: (this.prevPlayerID += 1)
-        }
-      ]
-    });
-  };
-  render() {
-    const highScore = this.getHighScore();
-    // using .map to list
-    return (
-      <div className="scoreboard">
-        <Header title="Scoreboard" players={this.state.players} />
+  }
 
-        {this.state.players.map((player, index) => (
-          <Player
-            playerName={player.name}
-            score={player.score}
-            key={player.id.toString()}
-            id={player.id}
-            index={index}
-            isHighScore={highScore === player.score} // is a player's 'score' prop equal to the high score?
-            changeScore={this.handelScoreChange}
-            removePlayer={this.removePlayer}
+  render() {
+    return (
+      <Provider value={this.state.players}>
+        <div className="scoreboard">
+          <Header />
+
+          <PlayerList 
+            changeScore={this.handleScoreChange}
+            removePlayer={this.handleRemovePlayer}   
           />
-        ))}
-        <AddPlayerForm addPlayer={this.handleAddPlayer} />
-        <Footer Year="2019" copy="Footer Copy" />
-      </div>
+          
+          <AddPlayerForm addPlayer={this.handleAddPlayer} />
+        </div>
+      </Provider>
     );
   }
 }
-
-ReactDOM.render(<App />, document.getElementById("root"));
 
 export default App;

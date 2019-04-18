@@ -1,15 +1,15 @@
-import React from "react";
-import Stats from "./Stats";
-import StopWatch from "./StopWatch";
+import React from 'react';
+import Stats from './Stats';
+import Stopwatch from './Stopwatch';
 
-const Header = ({ title, players }) => {
+const Header = () => {
   return (
     <header>
-      <Stats players={players} />
-      <h1>{title}</h1>
-      <StopWatch />
+      <Stats />
+      <h1>Scoreboard</h1>
+      <Stopwatch />
     </header>
   );
-};
+}
 
 export default Header;
